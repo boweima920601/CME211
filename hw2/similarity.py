@@ -122,7 +122,7 @@ for i in range(num_movie):
 		index = sim_list.index(max_sim)
 		max_movie_id = int(movie_list[index])
 		temp = (i, index)
-		str_list = "({},{},{})".format(max_movie_id, max_sim, movie_common_user_rating[tuple(sorted(temp))][2])
+		str_list = "({},%.2f,{})".format(max_movie_id, movie_common_user_rating[tuple(sorted(temp))][2])%(max_sim)
 
 
 		f.write("{} {}\n".format(movie_id, str_list))
