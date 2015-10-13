@@ -1,0 +1,5 @@
+AGC -1
+AAA 6 7
+ATG 1
+ACA 4
+TAT 0
