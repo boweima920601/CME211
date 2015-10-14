@@ -1,40 +1,59 @@
 FILE:          generatedata.py
 FUNCTIONALITY  -2
+
+COMMENTS:
 -Precarious index calculation. What if reflength = 998? Then end reference string length is 997! Be more rigorous
 -Good practice is also to do a sanity check after you create the ref, to see if length matches reflength
-CODE:
-...
+
+RELEVANT CODE:
 for i in range((reflength * 3/4)):
 	ref += gene[random.randint(0, 3)]
 ref += ref[halflen:]
---------------------------
 
+
+
+--------------------------
 FILE:          generatedata.py
 STYLE          -0
---Just for future considerations: don't need a flag, can just break out with 'breal' ;)
-CODE:
-...
+
+COMMENTS:
+-Just for future considerations: don't need a flag, can just break out with 'breal' ;)
+
+RELEVANT CODE:
 flag = True
 		while flag:
---------------------------
 
+
+
+--------------------------
 FILE:          generatedata.py
 STYLE          -2
+
+COMMENTS:
 -Overal comments are lacking. We asked you to explain what happens in important parts. E.g. what happens in a loop body,
 -such that we see that you understand what's going on.
---------------------------
 
+
+
+--------------------------
 FILE:          generatedata.py
 WRITEUP        -2
+
+COMMENTS:
 -Test data does never guarantee that it works on other data
 -Especially here when it is a relatively simple test data set
-CODE:
-...
+
+RELEVANT CODE:
 """And thus the designed algorithm is guaranteed to work properly on the test data set."""
+
+
+
 --------------------------
-
-
 WRITEUP:                    18/20
 STYLE:                       8/10
 FUNCTIONALITY:              68/70
+
+GRADING TA:              ljanssen
+#################################
 TOTAL POINTS:                  94
+#################################
