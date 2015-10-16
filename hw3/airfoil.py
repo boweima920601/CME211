@@ -169,6 +169,6 @@ class Airfoil:
 
 			ct = self.compute_lift_coefficient(self.pressure_coeff_list[alphas[i]], alphas[i])
 			stag_x, stag_y, val = self.compute_stag_pt(self.pressure_coeff_list[alphas[i]])
-			string += "{0:>5.2f} {1:>7.4f} ( {2:6.4f}, {3:6.4f}) {4:<.4f}\n".format(alphas[i], ct, stag_x, stag_y, val)
+			string += "{0:>5.2f} {1:>7.4f} ( {2:<6.4f}, {3:>7.4f}) {4:>7.4f}\n".format(alphas[i], ct, stag_x, stag_y, val)
 		
 		return string
