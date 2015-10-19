@@ -1,0 +1,123 @@
+FILE:          similarity.py
+DESIGN         -1
+
+COMMENTS:
+-This goes over the full numpy object again and count just to check wheter one or the other is zero or not. Think about it, that is very inefficient and is probably the reason why your code runs quite slow. Only 1 points deducted, but its importance is much higher! Think about this next time
+
+RELEVANT CODE:
+all_same = (np.count_nonzero(x_standardized) ==0) or (np.count_nonzero(y_standardized) == 0)
+
+
+
+--------------------------
+FILE:          similarity.py
+DESIGN         -0
+
+COMMENTS:
+-Main() func missing!, the global namespace is now cluttered with stuff!
+
+
+
+--------------------------
+FILE:          similarity.py
+FUNCTIONALITY  -2
+
+COMMENTS:
+-No welcome message with number of lines read etc.. seems like screen freezes!
+
+
+
+--------------------------
+FILE:          similarity.py
+FUNCTIONALITY  -2
+
+COMMENTS:
+-No correct warning for missing input arguments! It should do an exit with a correct warning message. Now it just returns None and continues
+
+
+
+--------------------------
+FILE:          similarity.py
+DESIGN         -2
+
+COMMENTS:
+-Reading data and processing it should all be in one or more functions. Your global namespace is really messy right now with all these data IO calls
+
+RELEVANT CODE:
+movie_data, threshold, nmax = read_data(sys.argv)
+
+# Get the number of users and number of movies.
+user_list = list(set(movie_data[:, 0]))
+movie_list = list(set(movie_data[:, 1]))
+
+
+
+--------------------------
+FILE:          similarity.py
+FUNCTIONALITY  -2
+
+COMMENTS:
+-It is really inefficient to first load in all the data (and store it) and then copy it all to seperate datastructures. Should do that in one go! This will affect speed and memory usage. Bigger files may blow up the memory and throw weird errors...
+
+RELEVANT CODE:
+movie_similarity = np.zeros((num_movie, num_movie))
+movie_rating = np.zeros((num_user, num_movie))
+movie_common_user_rating = {}
+movie_rating_avg = np.zeros(num_movie)
+
+
+
+--------------------------
+FILE:          similarity.py
+FUNCTIONALITY  -1
+
+COMMENTS:
+-Next time use a filestream or similar to continuously keep writing data to a file, that way you don;t need to keep all this stuff in-memory. In-memory is very slow since it does not allow effecieint usage of the cache since the cache is full always, and every item needs to be trerieved from memory. I know this is quite advacned and you dont need to know this, but you probavbly have an understanding of storing stuff in memory and that it is best to just write it to a file immediately! :)
+
+RELEVANT CODE:
+f = open(sys.argv[2], 'w')
+
+for i in range(num_movie):
+	movie_id = int(movie_list[i])
+	sim_list = list(movie_similarity[i])
+	max_sim = max(sim_list)
+
+
+
+--------------------------
+FILE:          similarity.py
+FUNCTIONALITY  -15
+
+COMMENTS:
+-Output is incorrect. It produces wrong highest similarity movie ids and coefficients!
+
+
+
+--------------------------
+FILE:          similarity.py
+FUNCTIONALITY  -15
+
+COMMENTS:
+-Code runs more than 10 minutes (420 sec on corn). Could be much faster with more thought on implementation
+
+
+
+--------------------------
+FILE:          similarity.py
+STYLE          -1
+
+COMMENTS:
+-Lack of git commits!
+
+
+
+--------------------------
+FUNCTIONALITY:              28/65
+STYLE:                       9/10
+DESIGN:                     12/15
+WRITEUP:                    10/10
+
+GRADING TA:              ljanssen
+#################################
+TOTAL POINTS:                  59
+#################################

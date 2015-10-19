@@ -9,8 +9,11 @@ def cosine_similarity(x, y, xbar, ybar):
 	x_standardized = x - xbar
 	y_standardized = y - ybar
 
+	#--design_1
+	#--This goes over the full numpy object again and count just to check wheter one or the other is zero or not. Think about it, that is very inefficient and is probably the reason why your code runs quite slow. Only 1 points deducted, but its importance is much higher! Think about this next time
+	#--START
 	all_same = (np.count_nonzero(x_standardized) ==0) or (np.count_nonzero(y_standardized) == 0)
-
+	#--END
 	if all_same:
 		return 0
 	else:
@@ -73,21 +76,40 @@ def compute_similarity_matrix(common_dict, thres, avg, matrix):
 	return matrix
 
 ####################################################################################################
+#--design_0
+#--Main() func missing!, the global namespace is now cluttered with stuff!
+#--END
 
+#--functionality_2
+#--No welcome message with number of lines read etc.. seems like screen freezes!
+#--END
+
+#--functionality_2
+#--No correct warning for missing input arguments! It should do an exit with a correct warning message. Now it just returns None and continues
+#--END
+
+#--design_2
+#--Reading data and processing it should all be in one or more functions. Your global namespace is really messy right now with all these data IO calls
+#--START
 movie_data, threshold, nmax = read_data(sys.argv)
 
 # Get the number of users and number of movies.
 user_list = list(set(movie_data[:, 0]))
 movie_list = list(set(movie_data[:, 1]))
+#--END
 
 num_user = len(user_list)
 num_movie = len(movie_list)
 num_rating = len(movie_data[:, 0])
 
+#--functionality_2
+#--It is really inefficient to first load in all the data (and store it) and then copy it all to seperate datastructures. Should do that in one go! This will affect speed and memory usage. Bigger files may blow up the memory and throw weird errors...
+#--START
 movie_similarity = np.zeros((num_movie, num_movie))
 movie_rating = np.zeros((num_user, num_movie))
 movie_common_user_rating = {}
 movie_rating_avg = np.zeros(num_movie)
+#--END
 
 start = time.time()
 
@@ -110,13 +132,18 @@ print("Read {} lines with total of {} movies and {} users".format(num_rating, nu
 print("Computed simiarities in {} seconds".format(end - start))
 
 # Finally, process the output file in the demand format.
+#--functionality_1
+#--Next time use a filestream or similar to continuously keep writing data to a file, that way you don;t need to keep all this stuff in-memory. In-memory is very slow since it does not allow effecieint usage of the cache since the cache is full always, and every item needs to be trerieved from memory. I know this is quite advacned and you dont need to know this, but you probavbly have an understanding of storing stuff in memory and that it is best to just write it to a file immediately! :)
+#--START
 f = open(sys.argv[2], 'w')
 
 for i in range(num_movie):
 	movie_id = int(movie_list[i])
 	sim_list = list(movie_similarity[i])
 	max_sim = max(sim_list)
-	
+
+#--END
+
 	if (max_sim > 0):
 		str_list = str()
 		index = sim_list.index(max_sim)
@@ -129,3 +156,15 @@ for i in range(num_movie):
 	else:
 		f.write("{}\n".format(movie_id))
 f.close()
+
+#--functionality_15
+#--Output is incorrect. It produces wrong highest similarity movie ids and coefficients!
+#--END
+
+#--functionality_15
+#--Code runs more than 10 minutes (420 sec on corn). Could be much faster with more thought on implementation
+#--END
+
+#--style_1
+#--Lack of git commits!
+#--END
