@@ -1,0 +1,96 @@
+FILE:          airfoil.py
+FUNCTIONALITY  -1
+
+COMMENTS:
+-What if inputdir does not have a '/' at the end?! Should use os.path.join() and other modules, like you did in other methods!!!
+
+RELEVANT CODE:
+f = open(inputdir + 'xy.dat', 'r')
+		name = f.readline().strip()
+
+
+
+--------------------------
+FILE:          airfoil.py
+STYLE          -1
+
+COMMENTS:
+-Remove commented-out code before submission!!!
+
+RELEVANT CODE:
+xmin = min(abs(x) for x in self.x)
+#		xymin = (xmin, self.y[self.x.index(xmin)])
+		xmax = max(abs(x) for x in self.x)
+#		xymax = (xmax, self.y[self.x.index(xmax)])
+
+#		length = math.sqrt((xymin[0] - xymax[0]) ** 2 + (xymin[1] - xymax[1]) ** 2)
+		length = abs(xmax - xmin)
+
+
+
+--------------------------
+FILE:          airfoil.py
+DESIGN         -2
+
+COMMENTS:
+-Storing delta cx and delta cy in a list, ever growing the list. Inefficient and unnecessary.
+-Can just have some memory allocated for a float() and increment the it by the delta cx and cy!
+-What if the discretization of the wing was very fine? In the limit it could yield infinite datapoints. Blowing up the system....
+
+RELEVANT CODE:
+cx = sum(delta_cxs)
+		cy = sum(delta_cys)
+
+
+
+--------------------------
+FILE:          airfoil.py
+STYLE          -0
+
+COMMENTS:
+-Why don't you use the same column formatting for the headers??
+
+RELEVANT CODE:
+string = "Test case: {}\n".format(self.name)
+		string += "\nalpha    cl          stagnation pt      \n"
+		string += "----- ------- --------------------------\n"
+
+
+
+--------------------------
+FILE:          airfoil.py
+WRITEUP        -1
+
+COMMENTS:
+-Should've elaborated more on encapsulation and decomposition. In particular to OOP specific. What you mentioned is very general and is also applicable to functions...
+
+
+
+--------------------------
+FILE:          airfoil.py
+FUNCTIONALITY  -6
+
+COMMENTS:
+-We asked to raise 3 exceptions, there are 3 missing, instead you did sys.exit() which terminates the full stack wihout useful exception object
+
+
+
+--------------------------
+FILE:          airfoil.py
+STYLE          -2
+
+COMMENTS:
+-Did not use git properly. not-meaningful git commit messages
+
+
+
+--------------------------
+FUNCTIONALITY:              58/65
+STYLE:                       7/10
+DESIGN:                     18/20
+WRITEUP:                      4/5
+
+GRADING TA:              ljanssen
+#################################
+TOTAL POINTS:                  87
+#################################
