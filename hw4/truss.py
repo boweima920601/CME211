@@ -51,7 +51,6 @@ class Truss:
 		plt.axis('equal')
 		# save the plot as the default .png file if not specified
 		plt.savefig(output)
-		plt.show()
 
 	def ComputeStaticEquilibrium(self):
 		"""
