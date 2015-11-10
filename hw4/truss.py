@@ -29,9 +29,13 @@ class Truss:
 		for i in range(len(self.joints[:, 0])):
 			self.coords[self.joints[i, 0]] = [self.joints[i, 1], self.joints[i, 2]]
 
+		#--style_0
+		#--AWESOME!
+		#--START
 		# plot the truss structure if desired
 		if (output):
 			self.PlotGeometry(output)
+		#--END
 
 	def PlotGeometry(self, output):
 		"""
@@ -118,21 +122,31 @@ class Truss:
 
 		# form the sparse matrix A using COO format
 		A = sp.coo_matrix((data, (row, col)), shape = (2 * no_joints, 2 * no_joints))
-
+#--functionality_1
+#--Should have this on top of your main.py, as it can affect also imports and exceptions being caught from within main!
+#--START
 		# test whether the linear system is singular before output the results
 		# if the system is singular, raise an exception and print an useful message
 		warnings.filterwarnings('error')
 		warnings.filterwarnings('ignore', category = np.VisibleDeprecationWarning)
 		warnings.filterwarnings('ignore', category = DeprecationWarning)
+#--END
 		try:
 			x = spla.spsolve(A.tocsr(), b)
 		except Exception:
 			# raise a RuntimeError if the system is singular
 			raise RuntimeError, "Cannot solve the linear system, unstable truss?"
+			#--functionality_1
+			#--This never gets called, since raise exits the stack and goes to the stack below
+			#--START
 			exit()
+			#--END
 
 		return x
 
+	#--design_2
+	#--Do not do all the work in this blok! __init__ and __repr__ are only used for lightweight init and print work
+	#--START
 	def __repr__(self):
 		"""
 		This function implements the actual string representation of the Truss object, in the required format
@@ -145,3 +159,5 @@ class Truss:
 			str_repr += "{0: >6}{1: >11.3f}\n".format(i + 1, x[i])
 
 		return str_repr
+
+		#--END

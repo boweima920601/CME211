@@ -22,3 +22,12 @@ except Exception as e:
   exit()
 
 print(t)
+
+#--style_0
+#--Awesome submission! Totally see you improving heaps!
+#--END
+
+
+#--style_1
+#--Too few git commits! Use git better!
+#--END

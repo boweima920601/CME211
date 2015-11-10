@@ -1,0 +1,91 @@
+FILE:          main.py
+STYLE          -0
+
+COMMENTS:
+-Awesome submission! Totally see you improving heaps!
+
+
+
+--------------------------
+FILE:          main.py
+STYLE          -1
+
+COMMENTS:
+-Too few git commits! Use git better!
+
+
+
+--------------------------
+FILE:          truss.py
+STYLE          -0
+
+COMMENTS:
+-AWESOME!
+
+RELEVANT CODE:
+# plot the truss structure if desired
+		if (output):
+			self.PlotGeometry(output)
+
+
+
+--------------------------
+FILE:          truss.py
+FUNCTIONALITY  -1
+
+COMMENTS:
+-Should have this on top of your main.py, as it can affect also imports and exceptions being caught from within main!
+
+RELEVANT CODE:
+# test whether the linear system is singular before output the results
+		# if the system is singular, raise an exception and print an useful message
+		warnings.filterwarnings('error')
+		warnings.filterwarnings('ignore', category = np.VisibleDeprecationWarning)
+		warnings.filterwarnings('ignore', category = DeprecationWarning)
+
+
+
+--------------------------
+FILE:          truss.py
+FUNCTIONALITY  -1
+
+COMMENTS:
+-This never gets called, since raise exits the stack and goes to the stack below
+
+RELEVANT CODE:
+exit()
+
+
+
+--------------------------
+FILE:          truss.py
+DESIGN         -2
+
+COMMENTS:
+-Do not do all the work in this blok! __init__ and __repr__ are only used for lightweight init and print work
+
+RELEVANT CODE:
+def __repr__(self):
+		"""
+		This function implements the actual string representation of the Truss object, in the required format
+		"""
+
+		x = self.ComputeStaticEquilibrium()
+		str_repr = "{0}{1: >9}\n".format("Beam".center(8), "Force")
+		str_repr += "-----------------\n"
+		for i in range(len(self.beams)):
+			str_repr += "{0: >6}{1: >11.3f}\n".format(i + 1, x[i])
+
+		return str_repr
+
+
+
+--------------------------
+FUNCTIONALITY:              68/70
+STYLE:                       9/10
+DESIGN:                     18/20
+
+GRADING TA:              ljanssen
+#################################
+TOTAL POINTS:                  95
+#################################
