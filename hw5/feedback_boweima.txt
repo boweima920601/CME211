@@ -1,0 +1,26 @@
+FILE:          checksoln.py
+STYLE          -1
+
+COMMENTS:
+-At least have a main() function! :)
+
+
+
+--------------------------
+FILE:          mazesolver.cpp
+STYLE          -0
+
+COMMENTS:
+-AWESOME solution, #nailedit
+
+
+
+--------------------------
+FUNCTIONALITY:              80/80
+STYLE:                       9/10
+DESIGN:                     10/10
+
+GRADING TA:              ljanssen
+#################################
+TOTAL POINTS:                  99
+#################################

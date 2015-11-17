@@ -125,3 +125,6 @@ int main(int argc, char* argv[]) {
 	}
     return 0;
 }
+//--style_0
+//--AWESOME solution, #nailedit
+//--END

@@ -45,3 +45,7 @@ if (exit[0] != (row - 1) or maze[exit[0], exit[1]] != 0):
 
 # otherwise we have got a valid solution
 print('Solution is valid!')
+
+#--style_1
+#--At least have a main() function! :)
+#--END
