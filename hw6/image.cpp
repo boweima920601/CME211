@@ -1,177 +1,182 @@
-/* in class image, we have three methods
-// sharpness: use laplacian operator and convolution function 
-// Boxblur: define different kernel sizes and then blur the image
-// Save: save the result image
-*/
-#include <boost/multi_array.hpp>
-#include <iostream>
 #include <string>
+#include <boost/multi_array.hpp>
 #define BOOST_DISABLE_ASSERTS
-#include "image.hpp"
-#include "hw6.hpp"
+#include <iostream>
 
-void Convolution(boost::multi_array<unsigned char,2> &input,
-                   boost::multi_array<unsigned char,2> &output,
-                   boost::multi_array<float,2>         &kernel)
-{
-                   
-	auto shape = input.shape();
-	unsigned int width   = (unsigned int)shape[1];
-    unsigned int height  = (unsigned int)shape[0];
-    auto shape2 = output.shape();
-	unsigned int width2   = (unsigned int)shape2[1];
-    unsigned int height2  = (unsigned int)shape2[0];
-    auto shape_k = kernel.shape();
-    unsigned int size_k = (unsigned int)shape_k[0];
-    unsigned int half_k = (unsigned int) ((size_k -1) / 2);
-    boost::multi_array<unsigned char,2> extend_image (boost::extents[height+size_k-1][width + size_k-1]);
-    
-    if ((width != width2) or (height != height2)){
-    	std::cout<<"input and output should be of the same size!"<<std::endl;
+#include "image.hpp"
+
+image::image(std::string input) {
+	this->input = input;
+	ReadGrayscaleJPEG(input, this->img);
+}
+
+void image::Save(std::string output) {
+	// check whether the output filename is empty
+	if (output.empty()) {
+		WriteGrayscaleJPEG(this->input, this->img);
+	}
+	else {
+		WriteGrayscaleJPEG(output, this->img);
+	}
+}
+
+void image::Convolution(boost::multi_array<unsigned char,2> &input, 
+				boost::multi_array<unsigned char,2> &output,
+				boost::multi_array<float,2> &kernel) {
+
+	unsigned int nrows = (unsigned int)(input.shape()[0]);
+	unsigned int ncols = (unsigned int)(input.shape()[1]);
+	unsigned int kn = (unsigned int)(kernel.shape()[0]);
+	unsigned int radius = (kn - 1)/2;
+
+/*
+	Basic idea: Create a larger image of size (nrows + 2 * radius) * (ncols + 2 * radius) to extend the original image
+	and overcome the difficulty of dealing the corner cases
+
+*/
+	boost::multi_array<unsigned char,2> large_img(boost::extents[nrows + 2 * radius][ncols + 2 * radius]);
+
+	// check if the kernel conditions are met
+	if ((kn != kernel.shape()[1]) || (kn < 3) || (kn % 2 == 0)) {
+		std::cerr << "Invalid kernel size. Provide a square kernel with odd dimension at least 3." << std::endl;
+		exit(1);
+	}
+
+	// check if the input and output have the same dimension
+	if (nrows != output.shape()[0] || ncols != output.shape()[1]) {
+		std::cerr << "ERROR: Input and output image size does not match." << std::endl;
+		exit(1);
+	}
+	
+	// start expand the image
+	//upper-left corner
+	for (unsigned int i = 0; i < radius ; i++) {
+    	for (unsigned int j = 0 ; j < radius; j++) {
+    		large_img[i][j] = input[0][0];
+    	}
+    }
+
+    // lower-left corner
+    for (unsigned int i = 0; i < radius ; i++) {
+    	for (unsigned int j = 0 ; j < radius; j++) {
+    		large_img[nrows + i + radius][j] = input[nrows - 1][0];
+    	}
+    }
+ 
+ 	// upper-right corner 
+    for (unsigned int i = 0; i < radius ; i++) {
+    	for (unsigned int j = 0 ; j < radius; j++) {
+    		large_img[i][ncols + j + radius] = input[0][ncols - 1];
+    	}
     }
     
-    if ((size_k % 2 != 1) and (size_k <3)){
-    	std::cout<<"size of kernel should be odd and be at least 3!"<<std::endl;
+    // lower-right corner
+    for (unsigned int i = 0; i < radius ; i++) {
+    	for (unsigned int j = 0 ; j < radius; j++) {
+    		large_img[nrows + i + radius][ncols + j + radius] = input[nrows - 1][ncols - 1];
+    	}
     }
-    
-/*in order to make the convolution process more easier, i decide to extend the original image to a larger image.
-//thus, we can do the convolution on a entire image without taking the boundary conditions seperately
-*/    
-    for (unsigned int i= 0; i <half_k ; i++){
-    	for (unsigned int j= 0 ; j< half_k; j++){
-    		extend_image[i][j]=input[0][0];
-    	}
-    		
-    } 
-    
-    for (unsigned int i= 0; i <half_k ; i++){
-    	for (unsigned int j= 0 ; j< half_k; j++){
-    		extend_image[height+i+half_k][j]=input[height-1][0];
-    	}
-    		
-    } 
-    
-    for (unsigned int i= 0; i <half_k ; i++){
-    	for (unsigned int j= 0 ; j< half_k; j++){
-    		extend_image[i][width+j+half_k]=input[0][width-1];
-    	}
-    		
-    } 
-    
-    for (unsigned int i= 0; i <half_k ; i++){
-    	for (unsigned int j= 0 ; j< half_k; j++){
-    		extend_image[height+i+half_k][width+j+half_k]=input[height-1][width-1];
-    	}
-    		
-    } 
-    
-    for(unsigned int i = 0; i < height; i++){
-		for(unsigned int j = 0; j < half_k; j++){
-			extend_image[i + half_k][j] = input[i][0];
+
+	// middle-left    
+    for(unsigned int i = 0; i < nrows; i++) {
+		for(unsigned int j = 0; j < radius; j++) {
+			large_img[i + radius][j] = input[i][0];
+		}
+	}
+
+	// middle-right	
+	for(unsigned int i = 0; i < nrows; i++) {
+		for(unsigned int j = 0; j < radius; j++) {
+			large_img[i + radius][ncols + j + radius] = input[i][ncols - 1];
 		}
 	}
 	
-	 for(unsigned int i = 0; i < height; i++){
-		for(unsigned int j = 0; j < half_k; j++){
-			extend_image[i + half_k][width+j+half_k] = input[i][width-1];
+	// middle-top
+	for(unsigned int i = 0; i < radius; i++) {
+		for(unsigned int j = 0; j < ncols; j++) {
+			large_img[i][j + radius] = input[0][j];
 		}
 	}
-	
-	 for(unsigned int i = 0; i < half_k; i++){
-		for(unsigned int j = 0; j < width; j++){
-			extend_image[i][j+half_k] = input[0][j];
+
+	// middle-bottom
+    for(unsigned int i = 0; i < radius; i++) {
+		for(unsigned int j = 0; j < ncols; j++) {
+			large_img[nrows + i + radius][j + radius] = input[nrows - 1][j];
 		}
 	}
-	
-    
-    for(unsigned int i = 0; i < half_k; i++){
-		for(unsigned int j = 0; j < width; j++){
-			extend_image[height+ i + half_k][j + half_k] = input[height-1][j];
+
+	// all the original pixels in the middle	
+	for(unsigned int i = 0; i < nrows; i++) {
+		for(unsigned int j = 0; j < ncols; j++) {
+			large_img[i + radius][j + radius] = input[i][j];
 		}
-	}
-	
-	for(unsigned int i = 0; i < height; i++){
-		for(unsigned int j = 0; j < width; j++){
-			extend_image[i + half_k][j + half_k] = input[i][j];
-		}
-	}
-    
-   
-      
-//convolution process on a larger image
-    for (unsigned int i=0; i<height; i++){
-    	for (unsigned int j=0; j<width; j++){
-    		float sum=0;
-    		for (unsigned int m= 0 ; m<size_k; m++){
-    			for (unsigned int n= 0; n< size_k; n++){
-    				sum += extend_image[i+m][j+n] * kernel[m][n];
+	}      
+
+	// compute the convuluted pixel greyscale value for each position
+    for (unsigned int i = 0; i < nrows; i++) {
+    	for (unsigned int j = 0; j < ncols; j++) {
+    		float blurred = 0;
+    		for (unsigned int k = 0 ; k < kn; k++) {
+    			for (unsigned int l = 0; l < kn; l++) {
+    				blurred += large_img[i + k][j + l] * kernel[k][l];
     			}
     		}
+
+			// deal with under/over-flow issue    		
+    		if (blurred < 0)
+    			blurred = 0;
+    		if (blurred > 255)
+    			blurred = 255;
+
     		
-    		if ( sum> 255){
-    			sum=255;
-    		}
-    		if (sum< 0){
-    			sum=0;
-    		}
-    		
-    		output[i][j]= (unsigned char)sum;	
+    		output[i][j] = (unsigned char)blurred;	
     		
     	}
-    }               
-                   
-}
-//constructor 
-image::image(std::string filename){
-	ReadGrayscaleJPEG(filename, input);
+    }
 }
 
-//calculate the sharpness of the image, use laplacian operator
+void image::BoxBlur(unsigned int s) {
+
+	boost::multi_array<float,2> kernel(boost::extents[s][s]);
+
+	for (unsigned int i = 0; i < s; i++) {
+		for (unsigned int j = 0; j < s; j++) {
+			float dim = (float)s;
+			kernel[i][j] = (float)1/(dim * dim);
+		}
+	}
+
+	auto img_copy = this->img;
+	image::Convolution(img_copy, this->img, kernel);
+
+}
+
 unsigned int image::Sharpness() {
-	boost::multi_array<float, 2> laplacian(boost::extents[3][3]);
-	laplacian[0][0]=0; laplacian[0][1]=1; laplacian[0][2]=0;
-	laplacian[1][0]=1; laplacian[1][1]=-4; laplacian[1][2]=1;
-	laplacian[2][0]=0; laplacian[2][1]=1 ; laplacian[2][2]=0;
-	auto output = input;
-	Convolution(input, output, laplacian);
-	auto shape=output.shape();
-	unsigned int width=(unsigned int)shape[1];
-	unsigned int height=(unsigned int)shape[0];
-	unsigned char key=0;
-	unsigned int result;
-	for (unsigned int i=0; i<height; i++){
-		for (unsigned int j=0; j<width; j++){
-			if (output[i][j] > key){
-				key=output[i][j];
-			}
+
+	// approximation of the Laplacian operator
+	boost::multi_array<float, 2> sharp_ker(boost::extents[3][3]);
+	sharp_ker[0][0] = 0;
+	sharp_ker[0][2] = 0;
+	sharp_ker[2][0] = 0;
+	sharp_ker[2][2] = 0;
+	sharp_ker[0][1] = 1;
+	sharp_ker[1][2] = 1;
+	sharp_ker[2][1] = 1;
+	sharp_ker[1][0] = 1;
+	sharp_ker[1][1] = -4;
+
+	unsigned int nrows = (unsigned int)this->img.shape()[0];
+	unsigned int ncols = (unsigned int)this->img.shape()[1];
+	boost::multi_array<unsigned char, 2> sharped_img(boost::extents[nrows][ncols]);
+	image::Convolution(this->img, sharped_img, sharp_ker);
+
+	// find the maximum sharpness value
+	unsigned char max_sharp = 0;
+	for (unsigned int i = 0; i < nrows; i++) {
+		for (unsigned int j = 0; j < ncols; j++) {
+			if (sharped_img[i][j] > max_sharp)
+				max_sharp = sharped_img[i][j];
 		}
 	}
-	result=(unsigned int)key;
-	return result;
-	
-	
+	return (unsigned int)max_sharp;
 }
-
-void image::Boxblur (unsigned int size_k){
-	boost::multi_array<float,2> kernel(boost::extents[size_k][size_k]);
-	for (unsigned int i=0; i<size_k; i++){
-		for (unsigned int j=0;j<size_k;j++){
-			kernel[i][j]=(float)1/ (float)(size_k * size_k);
-		}
-	}
-	auto output= input;
-	Convolution (output, input, kernel); //to avoid reload the image, the convolution will make directly on input
-	
-}
-
-void image::Save(std::string save_filename){
-	if(save_filename.empty()){
-  		save_filename = "stanford.jpg";
-	}
-   	WriteGrayscaleJPEG(save_filename, input);
-  
-}
-
-
-
-

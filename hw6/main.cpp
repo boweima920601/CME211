@@ -1,38 +1,40 @@
-/* filename: main.cpp
-// Two steps:
-// (1)-> load the original image, compute and output the sharpness
-// (2)-> use different kernel sizes to blur the original file and output the corresponding sharpness
-*/
-
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <iomanip>
+
 #include <boost/multi_array.hpp>
 #define BOOST_DISABLE_ASSERTS
-#include "hw6.hpp"
+
 #include "image.hpp"
 
-int main( ){
+int main() {
+	auto img = image("stanford.jpg");
 
-	image picture("stanford.jpg");
-	std::cout<<"Original image: "<<picture.Sharpness()<<std::endl;
-	
-	for (int i=0; i<7; i++){
-		int size_k;
-		size_k= 3+ 4 * i;
-		image picture("stanford.jpg");
-		picture.Boxblur(size_k);
-		std::cout<<"BoxBlur("<<size_k<<"):\t"<<picture.Sharpness()<<std::endl; 
-		std::string save_filename;
-		
-		std::string str_number;
-		str_number=std::to_string(size_k); //change int to string
-		
-		save_filename= "BoxBlur"+str_number +".jpg";
-		picture.Save(save_filename);   //save file
-		
-		
+	unsigned int sharpness = img.Sharpness();
+
+	std::cout << "Original image: " << sharpness << std::endl;
+
+	for (unsigned int i = 3; i <= 27; i += 4) {
+		// reload the initial image
+		auto img = image("stanford.jpg");
+
+		// format the output
+		std::ostringstream out;
+		if (i < 10)
+			out << "BoxBlur0" << i << ".jpg";
+		else
+			out << "BoxBlur" << i << ".jpg";
+
+		img.BoxBlur(i);
+		img.Save(out.str());
+
+		// compute and print out the sharpness of the blurred image
+		unsigned int sharpness = img.Sharpness();
+
+		std::cout << "BoxBlur(" << std::setw(2) << i << "): \t" << std::setw(3) << sharpness << std::endl;
 	}
-     
-	return 0;
 
+	return 0;
 }
+

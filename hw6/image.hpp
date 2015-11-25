@@ -1,18 +1,30 @@
-#include <boost/multi_array.hpp>
-#include <string>
-
 #ifndef IMAGE_HPP
 #define IMAGE_HPP
 
+#include <string>
+
+#include <boost/multi_array.hpp>
+#include "hw6.hpp"
+
 class image {
-	boost::multi_array<unsigned char,2> input;
-	
+	// private data members
+	boost::multi_array<unsigned char, 2> img;
+
+	std::string input;
+
+	// private functions
+	void Convolution(boost::multi_array<unsigned char,2> &input, 
+				boost::multi_array<unsigned char,2> &output,
+				boost::multi_array<float,2> &kernel);
+
 public:
- 	image(std::string filename);
- 	unsigned int Sharpness();
- 	void Boxblur (unsigned int size_k);
- 	void Save(std::string save_filename);
-  
+	// constructor
+	image(std::string input);
+
+	// public functions for the main() to call
+	void BoxBlur(unsigned int s);
+	unsigned int Sharpness();
+	void Save(std::string output);
 };
 
 #endif /* IMAGE_HPP */
