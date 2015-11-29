@@ -1,0 +1,16 @@
+FILE:          main.cpp
+FUNCTIONALITY  -0
+
+COMMENTS:
+-Good progress!!!
+
+
+
+--------------------------
+WRITEUP:                      5/5
+FUNCTIONALITY:              20/20
+
+GRADING TA:              ljanssen
+#################################
+TOTAL POINTS:                  25
+#################################
