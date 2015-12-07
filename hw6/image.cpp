@@ -37,12 +37,17 @@ void Convolution(boost::multi_array<unsigned char,2> &input,
 /*in order to make the convolution process more easier, i decide to extend the original image to a larger image.
 //thus, we can do the convolution on a entire image without taking the boundary conditions seperately
 */    
+//--design_3
+//--Unnecessary to create extended matrix. Better practice to go around this as this will allocate even more memory wich can be quite substantial 
+//--that it may break down with bigger matrix sizes.
+//--START    
     for (unsigned int i= 0; i <half_k ; i++){
     	for (unsigned int j= 0 ; j< half_k; j++){
     		extend_image[i][j]=input[0][0];
     	}
     		
     } 
+  //--END
     
     for (unsigned int i= 0; i <half_k ; i++){
     	for (unsigned int j= 0 ; j< half_k; j++){
@@ -166,7 +171,11 @@ void image::Boxblur (unsigned int size_k){
 
 void image::Save(std::string save_filename){
 	if(save_filename.empty()){
+		//--functionality_2
+		//--filename could be hardcoded in main, yes, but not in the class!
+		//--START
   		save_filename = "stanford.jpg";
+  		//--END
 	}
    	WriteGrayscaleJPEG(save_filename, input);
   

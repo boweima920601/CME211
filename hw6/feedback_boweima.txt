@@ -1,0 +1,70 @@
+FILE:          image.cpp
+DESIGN         -3
+
+COMMENTS:
+-Unnecessary to create extended matrix. Better practice to go around this as this will allocate even more memory wich can be quite substantial
+-that it may break down with bigger matrix sizes.
+
+RELEVANT CODE:
+for (unsigned int i= 0; i <half_k ; i++){
+    	for (unsigned int j= 0 ; j< half_k; j++){
+    		extend_image[i][j]=input[0][0];
+    	}
+    		
+    }
+
+
+
+--------------------------
+FILE:          image.cpp
+FUNCTIONALITY  -2
+
+COMMENTS:
+-filename could be hardcoded in main, yes, but not in the class!
+
+RELEVANT CODE:
+save_filename = "stanford.jpg";
+
+
+
+--------------------------
+FILE:          main.cpp
+STYLE          -0
+
+COMMENTS:
+-Can also just do  for (int i = 3; i < 28; i += 4)
+
+RELEVANT CODE:
+for (int i=0; i<7; i++){
+		int size_k;
+		size_k= 3+ 4 * i;
+
+
+
+--------------------------
+FILE:          main.cpp
+STYLE          -2
+
+COMMENTS:
+-Poor git usage
+
+
+
+--------------------------
+FILE:          main.cpp
+FUNCTIONALITY  -2
+
+COMMENTS:
+-Incorrect BoxBlurxx output names, missing leading 0's
+
+
+
+--------------------------
+FUNCTIONALITY:              61/65
+STYLE:                      13/15
+DESIGN:                     17/20
+
+GRADING TA:              ljanssen
+#################################
+TOTAL POINTS:                  91
+#################################
