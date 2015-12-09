@@ -1,7 +1,13 @@
 #ifndef CGSOLVER_HPP
 #define CGSOLVER_HPP
 
+#include <string>
 #include <vector>
+
+#include "sparse.hpp"
+/* Function to help create and write the solution to the demand file. */
+
+void WriteSoln(std::vector<double> &x, std::string name);
 
 /* Function that implements the CG algorithm for a linear system 
 
@@ -18,6 +24,8 @@ int CGSolver(std::vector<double> &val,
              std::vector<int>    &col_idx,
              std::vector<double> &b, 
              std::vector<double> &x,
-             double              tol);
+             double              tol,
+             std::string         soln_prefix);
+
 
 #endif /* CGSOLVER_HPP */
