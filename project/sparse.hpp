@@ -31,6 +31,7 @@ class SparseMatrix
 
     /* TODO: Add any additional public methods you need */
 
+    /* Method that actually solve the linear system using CG */
     int CG(std::vector<double> &b, std::vector<double> &x, double tol, std::string soln_prefix);
     
 };

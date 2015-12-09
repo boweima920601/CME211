@@ -11,6 +11,7 @@
 void WriteSoln(std::vector<double> &x, std::string name) {
     std::ofstream f(name);
 	std::size_t dim = x.size();
+	// write the solution line by line
 	if (f.is_open()) {
 		for (std::size_t i = 0; i < dim; i++) {
 			f << x[i] << std::endl;
@@ -40,6 +41,7 @@ int CGSolver(std::vector<double> &val,
 	std::vector<double> p = r;	// p0 = r0
     std::size_t niter = 0;
 
+    // write the initial guess
     std::stringstream s;
     s << std::setfill('0') << std::setw(3) << 0;
     std::string filename = soln_prefix + s.str() + ".txt";
@@ -76,6 +78,7 @@ int CGSolver(std::vector<double> &val,
 		// update p
 		p = vec_add_with_coeff(r, p, beta);
 
+		// write the solution every 10 iterations
 		if (niter % 10 == 0) {
             std::stringstream s;
             s << std::setfill('0') << std::setw(3) << niter;

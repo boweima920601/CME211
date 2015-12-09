@@ -56,9 +56,9 @@
 
 %%% The "real" document content comes below...
 
+\usepackage{graphicx}
 
-
-\title{Project Part 1 Writeup}
+\title{Project  Writeup}
 \author{Bowei Ma}
 %\date{} % Activate to display a given date or no date (if empty),
          % otherwise the current date is printed 
@@ -67,56 +67,110 @@
 \maketitle
 
 \noindent
-Pseudocode for the CG algorithm is shown below.
+\textbf{\Large{Overall Description of the Project\\}}
+
+The major objective of the final project is to implement a solver for simplified steady-state heat equation. The heat transportation system is described where you are transferring some hot fluid with temperature $T_{h}$ within a pipe. Moreover, in order to keep the exterior of the pipe cool, a series of cold air jets with temperature $T_{c}$ are equally distributed along the pipe and continuously impinge on the pipe surface.
+
+The goal of our solver is to determine the mean temprature within the pipe wall using a periodic portion of the pipe.Since the matrix $A$ formed from the geometry is symmetric positive definite and rather sparse, we choose to implement a solver using Conjuagate Gradiant (CG) method to solve the equation $Ax = b$ iteratively.
+
+\bigskip
+\noindent
+\textbf{\Large{Description of the CG solver implementation\\}}
+\bigskip
+
+The problem could be summarized as solving $Ax = b$ for some sparse matrix $A$ (which is the representation of the underlying heat equation) using CG method. In order to efficiently utilize the OOP design concept of C++ language, we encapsulate the equation solver into two classes:
+
+\begin{itemize}
+
+\item \textbf{SparseMatrix} : A class that contains the structure of a sparse matrix. The \texttt{SparseMatrix} class implement several data members and fundamental operations (such as set the dimension of the matrix, add an non-zero entry into the matrx, etc.).
+
+\item \textbf{HeatEquation2D} : A class that contains the setup and solving procedure of the heat equation system. The \texttt{HeatEquation2D} class utilize the instance of  \texttt{SparseMatrix} class, setup the system using a file that describes the geometry of the pipe, and then solve the linear system $Ax = b$ using CG iteration.
+
+\end{itemize}
+
+\newpage
+The pseudocode of the CG algorithm is decribed below:
+\bigskip
 
 \begin{algorithm}[H]
+  \mathchardef\mhyphen="2D
+  \caption{Pseudocode of Conjugate Gradient (CG) Algorithm}
   \SetAlgoLined
   initialize $u_{0}$\;
   $r_{0} = b - A u_{0}$\;
-  $L2normr0 = L2norm(r_{0})$\;
+  $2\mhyphen norm(r0) = 2\mhyphen norm(r_{0})$\;
   $p_{0} = r_{0}$\;
   $niter = 0$\;
-  \While{ $niter < nitermax$}{
+  \While{ $niter < max\#iteration$}{
     $niter = niter +1$\;
-    $alpha = (r_{n}^{T} r_{n})/ (p_{n}^{T} A p_{n})$\;
-    $u_{n+1} = u_{n} + alpha_{n}p_{n}$\;
-    $r_{n+1} = r_{n} - alpha_{n}A p_{n}$\;
-    $L2normr = L2norm(r_{n+1})$\;
-    \If{ $L2normr/L2normr0 < threshold$}{
+    $\alpha_{n} = (r_{n}^{T} r_{n})/ (p_{n}^{T} A p_{n})$\;
+    $u_{n+1} = u_{n} + \alpha_{n}p_{n}$\;
+    $r_{n+1} = r_{n} - \alpha_{n}A p_{n}$\;
+    $2\mhyphen norm(r) = 2\mhyphen norm(r_{n+1})$\;
+    \If{ $2\mhyphen norm(r) / 2\mhyphen norm(r0) < threshold$}{
       break\;
       }
-    $beta_{n} = (r_{n+1}^{T} r_{n+1}) / (r_{n}^{T} r_{n})$\;
-    $p_{n+1} = r_{n+1} + beta_{n} p_{n}$\;
+    $\beta_{n} = (r_{n+1}^{T} r_{n+1}) / (r_{n}^{T} r_{n})$\;
+    $p_{n+1} = r_{n+1} + \beta_{n} p_{n}$\;
     }
 
 \end{algorithm}
 
 \bigskip
 \noindent
-\textbf{Question}: Short discussion of how the CG solver is implemented in terms of functions to eliminate redundant code.
+\textbf{\Large{User's Guide to Execute the Program}}
+
+\bigskip
+The program of the heat equation solver is divided into two parts:
+
+\begin{itemize}
+
+\item The computation of the solver is written in C++ using OOP design. With the convienence of \texttt{makefile} , the compilation procedure is pretty straight forward. Basic usage from command line is:
 
 \smallskip
+\texttt{make\\}
+\texttt{./main [input filename] [solution\_prefix]}
+\bigskip
+
+The solution files are written for the initial guess, the last convergence solution and every 10 iterations. The names of the solution files are in the following pattern:
+\begin{center}
+\texttt{solution\_prefix + number of iterations.txt\\}
+\end{center}
+After the execution of the program, a meeage with convergence information would be print on the console.
+
+A sample output of the C++ program is given below:
+\smallskip\\
+\texttt{\$ ./main input2.txt solution\\
+SUCCESS: CG solver converged in 157 iterations.}
+\smallskip
+
+\item The postprocessing and visualization of the results are written in Python file \texttt{postprocessing.py}, which would compute the mean temperature within the pipe and visualize the thermal distribution using a pseudocolor plot.
+
+The basic usage of the postprocessing procedure from the command line is:
+
+\smallskip
+\texttt{python postprocessing.py [input filename] [solution filename]}
+\smallskip
+
+A sample output of the Python program is given below:
+\bigskip\\
+\texttt{Input file processed: input2.txt\\Mean Temperature: 81.8317\\}
+\end{itemize}
+
 \noindent
-\textbf{Answer}:
-\smallskip
+\textbf{\Large{Example of Visualization of the Heat Distribution}}
 
-The CG algorithm is one of the fundamental iterative algorithms to solve Ax = b when A is regarded as a sparse matrix with initial guess x.
+\begin{figure}[h]
+\includegraphics[width = \textwidth]{figure}
+\centering
+\caption{Example of a pseudocolor plot of input2.txt}
+\end{figure}
 
-In order to wrap operations into functions to eliminate redundancy, I first noiced that the the algorithm involves the following basic matrix and vector operations: 
-\begin{itemize}
-\item Addition(including sunstraction) of vectors
-\item Scalar multiplication of vectors
-\item Inner product of two vectors
-\item 2-norm computation of a vector
-\item Sparse matrix-vector multiplication
-\end{itemize}
-
-In addition to notice that the vector addition always appears as x + by as in this algorithm, I implemented the above-mentioned operations into 4 C++ functions, which are:
-\begin{itemize}
-\item vec\_add\_with\_coeff(x, y, b), which returns x +by
-\item vec\_dot\_product(x, y), which computes the inner product of x and y, i.e., $(x^{T} y)$
-\item norm(x), which computes the norm of x using inner product and square root
-\item csr\_mat\_vec\_product(A, x), which computes the matrix-vector multiplication Ax with A in CSR format
-\end{itemize}
+\newpage
+\noindent
+\textbf{\textit{\Large{Reference}}}
+\bigskip
+\\Nick Henderson, \textit{CME 211: Project Part 1}(2015)\\
+Nick Henderson, \textit{CME 211: Project Part 2}(2015)
 
 \end{document}

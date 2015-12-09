@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "sparse.hpp"
+
 /* Function to help create and write the solution to the demand file. */
 
 void WriteSoln(std::vector<double> &x, std::string name);

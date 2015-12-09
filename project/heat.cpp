@@ -12,17 +12,21 @@ int HeatEquation2D::Setup(std::string inputfile) {
 	std::vector<double> b, x;
 	double l, w, h, Tc, Th;
 	int m, n, nrows, ncols, nx, ny;
+
 	if (f.is_open()) {
 		if (f >> l >> w >> h >> Tc >> Th) {
             m = (int)(l/h) + 1;
 			n = (int)(w/h) + 1;
+            // get rid of the boundary points, which would be setup manually
 			nx = m - 1;
 			ny = n - 2;
+            // the dimension of the matrix A
 			nrows = nx * ny;
 			ncols = nrows;
 			A.Resize(nrows, ncols);
 
 			for (int i = 0; i < nrows; i++) {
+                // the points adjacent to the left periodic boundary
 				if (i % nx == 0) {
 						// points adjacent to the cold isothermal boundary.
 						if (i < nx) {
@@ -66,6 +70,7 @@ int HeatEquation2D::Setup(std::string inputfile) {
 				}
                 // points adjacent to periodic boundary on the right
 				else if ((i + 1) % nx == 0) {
+                    // points adjacent to the cold isothermal boundary
 					if (i < nx) {
 						double Tx = (-1) * Tc * (exp(-10 * pow((i*h - l/2), 2)) - 2); 
 						b.push_back(Tx);
@@ -106,6 +111,7 @@ int HeatEquation2D::Setup(std::string inputfile) {
 					}
 				}
 				else {
+                    // points adjacent to the cold isothermal boundary
 					if (i < nx) {
 						double Tx = (-1) * Tc * (exp(-10 * pow((i*h - l/2), 2)) - 2); 
 						b.push_back(Tx);
@@ -145,12 +151,12 @@ int HeatEquation2D::Setup(std::string inputfile) {
                         A.AddEntry(i, i + nx, -1);
 					}
 				}
+                // initial guess
 				x.push_back(0);
 			}
             
             A.ConvertToCSR();
 			this->A = A;
-            
 			this->b = b;
 			this->x = x;
             
