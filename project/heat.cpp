@@ -15,8 +15,12 @@ int HeatEquation2D::Setup(std::string inputfile) {
 
 	if (f.is_open()) {
 		if (f >> l >> w >> h >> Tc >> Th) {
+            //--design_1
+//--Not checking whether number nodes is integer
+//--START
             m = (int)(l/h) + 1;
 			n = (int)(w/h) + 1;
+            //--END
             // get rid of the boundary points, which would be setup manually
 			nx = m - 1;
 			ny = n - 2;
@@ -24,10 +28,14 @@ int HeatEquation2D::Setup(std::string inputfile) {
 			nrows = nx * ny;
 			ncols = nrows;
 			A.Resize(nrows, ncols);
-
+//--design_3
+//--Bad decomposition of creating the A matrix. Too many nested branches and copying of code. Not readable.
+            //--START
 			for (int i = 0; i < nrows; i++) {
                 // the points adjacent to the left periodic boundary
 				if (i % nx == 0) {
+                    //...
+                    //--END
 						// points adjacent to the cold isothermal boundary.
 						if (i < nx) {
 							double Tx = (-1) * Tc * (exp(-10 * pow((i*h - l/2), 2)) - 2); 
@@ -187,3 +195,7 @@ int HeatEquation2D::Solve(std::string soln_prefix) {
 	}
 	return 1;
 }
+
+//--style_2
+//--Make: No object files (.o), which are very useful for bigger projects dealing with dependencies
+//--END
